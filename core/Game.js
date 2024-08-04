@@ -1,9 +1,13 @@
 const { WebSocketServer} = require("ws");
 const {ServerEvent} = require("./ServerEventManager");
 
+//事件循环是否开启
+let eventLoop = false
+//事件循环函数
+let eventFunc = []
 //类对象存储
 let classMap = {}
-
+//Websocket服务端对象
 let ws = new WebSocketServer({port: 4001});
 console.log('服务器启动成功,开始监听 4001...')
 
@@ -69,6 +73,39 @@ module.exports.game_send = (tag, data) => {
     }
 }
 
+//开启事件循环 delay = 间隔毫秒
+module.exports.game_openEventLoop = (delay)=>{
+    //如果已开启则忽略操作
+    if(!eventLoop)
+    {
+        //限制一下,防止设置过快,1秒60帧约等于16毫秒间隔,可以用了
+        delay = delay < 16 ? 16 : delay
+        eventLoop = true
+        setInterval(()=>{
+            //需要重复执行的函数
+            eventFunc.forEach((func)=>{
+                func()
+            })
+        },delay)
+    }
+}
+
+//添加定时循环函数
+module.exports.game_addEventLoopFunc = (handler)=>{
+    //检查是否已存在,不存在则添加
+    if(!eventFunc.includes(handler)){
+        eventFunc.push(handler)
+    }
+}
+
+//删除定时循环函数
+module.exports.game_removeEventLoopFunc = (handler) =>{
+    //查找要删除的函数,如果不存在则返回 -1,否则删除指定元素
+    let index = eventFunc.indexOf(handler)
+    if(index !== -1){
+        eventFunc.splice(index,1)
+    }
+}
 
 //标识结构
 class Struct {
