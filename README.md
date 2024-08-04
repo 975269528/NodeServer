@@ -22,6 +22,9 @@ game_reg(new User())
 ```javascript
 //普通消息
 {className: 类名称, method: 方法名称, data: 数据}
+//例如
+{className: User, method: login, data: '你好,我是来自客户端的数据'}
+
 //订阅消息
 {className: ServerEventManager, method: addServerEvent, data: {eventName: 事件名称}}
 //取消订阅
