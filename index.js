@@ -1,6 +1,6 @@
-const {game_run, game_reg, game_call} = require("./Game");
-const {User} = require("./User");
-const {ServerEventManager} = require("./ServerEventManager");
+const {game_run, game_reg, game_call} = require("./core/Game");
+const {User} = require("./api/User");
+const {ServerEventManager} = require("./core/ServerEventManager");
 
 
 game_run()

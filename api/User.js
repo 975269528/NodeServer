@@ -1,5 +1,5 @@
-const {game_send} = require("./Game");
-const {ServerEvent} = require("./ServerEventManager");
+const {game_send} = require("../core/Game");
+const {ServerEvent} = require("../core/ServerEventManager");
 
 class User {
     constructor() {
@@ -10,7 +10,7 @@ class User {
         //发送消息到客户端
         game_send(tag, data)
         //测试订阅推送
-        //ServerEvent.publish('test', '你好,我是测试订阅回调的,你收到了吗?')
+        ServerEvent.publish('test', '你好,我是测试订阅回调的,你收到了吗?')
     }
 }
 

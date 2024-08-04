@@ -1,8 +1,9 @@
-const {WebSocket, WebSocketServer} = require("ws");
+const { WebSocketServer} = require("ws");
 const {ServerEvent} = require("./ServerEventManager");
 
 //类对象存储
 let classMap = {}
+
 let ws = new WebSocketServer({port: 4001});
 console.log('服务器启动成功,开始监听 4001...')
 
