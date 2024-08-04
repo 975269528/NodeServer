@@ -20,7 +20,12 @@ game_reg(new User())
 客户端必要提交参数(区分大小写) 
 字符串格式: 
 ```javascript
+//普通消息
 {className: 类名称, method: 方法名称, data: 数据}
+//订阅消息
+{className: ServerEventManager, method: addServerEvent, data: {eventName: 事件名称}}
+//取消订阅
+{className: ServerEventManager, method: removeServerEvent, data: {eventName: 事件名称}}
 ```
 ----------------------------------------------
 客户端接收参数(区分大小写)
