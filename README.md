@@ -1,5 +1,13 @@
 # NodeServer
 
+使用前必要操作
+----
+使用 `webstorm` 或 `VS Code` 等其他编辑器打开项目后 , 首先在控制台运行以下命令安装必要的包  
+如果遇到网络问题等无法安装包,可以点此查看如何设置国内镜像源 [如何设置国内镜像源](https://www.cnblogs.com/bigron/p/17486819.html)
+```
+npm install
+```
+
 入口文件介绍
 ----
 服务器入口页:  `index.js` 内执行代码
