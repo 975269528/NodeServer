@@ -13,11 +13,12 @@ npm install
 ----
 服务器入口页:  `index.js` 内执行代码
 
-```javascript
+```
 import {GameManager} from "./core/GameManager.js";
 import {config} from "dotenv";
-//导入必要的模块
-//加载 .env 文件中配置信息
+//↑↑↑↑↑导入必要的模块↑↑↑↑↑
+
+//↓↓↓↓↓加载 .env 文件中配置信息↓↓↓↓↓(不可删除,必须在最前面执行)
 config()
 
 //执行游戏逻辑
@@ -31,43 +32,37 @@ GameManager.reg()
 客户端必要提交参数(区分大小写)
 字符串格式:
 
-```javascript
+```
 //普通消息
 {
-    className: 类名称, method
-:
-    方法名称, data
-:
-    数据
+    className: 类名称, 
+    method:方法名称, 
+    data:数据
 }
 //例如
 {
-    className: User, method
-:
-    login, data
-:
-    '你好,我是来自客户端的数据'
+    className: User, 
+    method:login, 
+    data:'你好,我是来自客户端的数据'
 }
 
 //订阅消息
 {
-    className: ServerEventManager, method
-:
-    addServerEvent, data
-:
-    {
-        eventName: 事件名称
-    }
+    className: ServerEventManager, 
+    method:addServerEvent, 
+    data:
+        {
+            eventName: 事件名称
+        }
 }
 //取消订阅
 {
-    className: ServerEventManager, method
-:
-    removeServerEvent, data
-:
-    {
-        eventName: 事件名称
-    }
+    className: ServerEventManager, 
+    method:removeServerEvent, 
+    data:
+        {
+            eventName: 事件名称
+        }
 }
 ```
 
@@ -75,15 +70,12 @@ GameManager.reg()
 客户端接收参数(区分大小写)
 字符串格式:
 
-```javascript
+```
 {
-    eventName:事件名称(无事件为0), className
-:
-    类名称, method
-:
-    方法名称, data
-:
-    数据
+    eventName:事件名称(无事件为0),
+    className: 类名称,
+    method: 方法名称, 
+    data: 数据
 }
 ```
 
@@ -91,7 +83,7 @@ GameManager.reg()
 ----
 类方法必须两个参数,第一个为tag,第二个为客户端发送过来的消息内容
 
-```javascript
+```
 export default class User {
     constructor() {
     }
