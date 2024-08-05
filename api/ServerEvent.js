@@ -1,7 +1,7 @@
 import {GameManager} from "../core/GameManager.js";
 
 //供客户端订阅事件使用
-export class ServerEvent {
+export default class ServerEvent {
     constructor() {
     }
     

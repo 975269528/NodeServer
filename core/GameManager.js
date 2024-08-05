@@ -1,13 +1,20 @@
-import {WebSocketServer} from "ws";
-
 //事件循环是否开启
+import {WebSocketServer} from "ws";
+import {readdir} from 'fs/promises'
+import {fileURLToPath, pathToFileURL} from 'url';
+import {dirname, join} from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
 let eventLoop = false
 //事件循环函数存储
 let eventFunc = []
 //可调用类对象存储
 let classMap = {}
 //Websocket服务端对象
-let ws = new WebSocketServer({port: process.env.WEBSOCKET_PORT})
+let ws
 //setInterval返回值,可用于关闭循环
 let loopResult
 // 存储事件和对应的处理函数
@@ -18,6 +25,17 @@ export const GameManager = {
     
     //启动服务器
     run: function () {
+        let port = parseInt(process.env.WEBSOCKET_PORT, 10)
+        if (!isNaN(port)) {
+            // 如果成功解析为整数，则使用该端口创建 WebSocketServer
+            ws = new WebSocketServer({port: port})
+            console.log('端口解析为:', port, '服务器已启动')
+        } else {
+            // 如果无法解析为整数，则输出错误信息并结束函数或程序
+            console.log('WebSocketServer 端口设置错误: ', process.env.WEBSOCKET_PORT)
+            return
+        }
+        
         ws.on('connection', (ws, req) => {
             
             console.log("用户[" + req.connection.remoteAddress + "] 进入连接");
@@ -25,7 +43,7 @@ export const GameManager = {
             ws.on('message', (msg) => {
                 try {
                     //解析数据
-                    console.log(' message收到的原始消息', msg.toString())
+                    console.log('message收到的原始消息', msg.toString())
                     let {className, method, data} = JSON.parse(msg)
                     //调用已注册方法
                     let tag = new Struct(req.connection.remoteAddress, ws, className, method)
@@ -36,20 +54,40 @@ export const GameManager = {
                 }
             })
             ws.on('close', () => {
-                ServerEventManager.unsubscribe2(ws)
-                console.log(' close用户断开连接' + req.connection.remoteAddress);
+                this.unsubscribe2(ws)
+                console.log('close用户断开连接' + req.connection.remoteAddress);
             })
             ws.on('error', (err) => {
-                console.log(' error用户异常断开' + req.connection.remoteAddress);
+                console.log('error用户异常断开' + req.connection.remoteAddress);
                 console.log(err);
             })
         })
     },
     
     //注册可调用类
-    reg: function (classInstance) {
-        console.log(' game_reg已注册新类对象实例:', classInstance.constructor.name)
-        classMap[classInstance.constructor.name] = classInstance
+    reg: async function () {
+        //使用fs遍历api目录中js文件
+        const apiDir = join(__dirname, '..', 'api'); // 根据实际情况修改目录路径
+        try {
+            const files = await readdir(apiDir);
+            for (const file of files) {
+                if (file.endsWith('.js')) {
+                    const modulePath = pathToFileURL(join(apiDir, file))
+                    try {
+                        const module = await import(modulePath);
+                        // 假设模块中导出了一个类或对象，根据实际情况调整
+                        const instance = new module.default(); // 如果是默认导出，或者根据实际情况获取具名导出
+                        // 使用 instance 进行你的操作，例如加入一个数组中等
+                        classMap[instance.constructor.name] = instance
+                        console.log('已加载可调用模块: ', instance.constructor.name)
+                    } catch (err) {
+                        console.error(`加载可调用模块失败 ${modulePath}:`, err);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(e)
+        }
     },
     
     //调用类方法且传递参数
@@ -61,7 +99,7 @@ export const GameManager = {
                 classMap[className][method](tag, data)
             }
         } catch (e) {
-            console.log(' game_call发生错误:' + e)
+            console.log('call发生错误:' + e)
         }
     },
     
